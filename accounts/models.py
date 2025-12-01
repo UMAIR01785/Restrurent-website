@@ -40,16 +40,18 @@ class Myaccount(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    Customer=1
+    Restaurant=2
     role_choices=(
-        ('customer', 'customer'),
-        ('restaurant', 'restaurant'),
+        (1, 'customer'),
+        (2, 'restaurant'),
     )
     first_name=models.CharField( max_length=50)
     last_name=models.CharField( max_length=50)
     email=models.EmailField(unique=True, max_length=254)
     phone_number=models.CharField(blank=True,null=True)
     username=models.CharField(unique=True, max_length=50)
-    role=models.CharField(choices=role_choices, max_length=50,null=True,blank=True)
+    role=models.IntegerField(choices=role_choices,null=True,blank=True)
 
     joined_date=models.DateTimeField(  auto_now_add=True)
     last_login=models.DateTimeField( auto_now=True)
@@ -73,6 +75,17 @@ class User(AbstractBaseUser):
     
     def has_module_perms(self, app_label):
      return True
+    
+
+    def get_role(self):
+        if self.role == 1:
+            user_role='customer'
+        elif self.role == 2:
+            user_role = 'restaurant'
+        return user_role
+        
+
+       
 
 
 

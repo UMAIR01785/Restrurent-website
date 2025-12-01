@@ -23,3 +23,15 @@ class Userform(forms.ModelForm):
                 raise forms.ValidationError("password does not match")
             
             return cleaned_data
+    
+    def __init__(self,*args,**kwargs):
+         super().__init__(*args,**kwargs)
+
+         self.fields['first_name'].widget.attrs['placeholder']='Enter the First name'
+         self.fields['last_name'].widget.attrs['placeholder']='Enter the last name'
+         self.fields['email'].widget.attrs['placeholder']='Enter the Email'
+         self.fields['username'].widget.attrs['placeholder']='Enter the Username'
+
+
+         for item in self.fields:
+              self.fields[item].widget.attrs['class']='form-control'
