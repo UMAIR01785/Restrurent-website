@@ -1,0 +1,9 @@
+{% autoescape off %}
+hi{{user.first_name}}-{{user.last_name}}
+{% if is_active %}
+Congrulation you are active to open the shop!
+{% else %}
+We are sorry to open the shop here please try again
+{% endif %}
+
+{% endautoescape %}

@@ -1,6 +1,6 @@
 from django import forms
-from . models import User
-
+from . models import User,Userprofile
+from accounts.validators import validator_error
 class Userform(forms.ModelForm):
     password=forms.CharField(widget=forms.PasswordInput(attrs={
         'class':'form-control small-input',
@@ -26,7 +26,7 @@ class Userform(forms.ModelForm):
     
     def __init__(self,*args,**kwargs):
          super().__init__(*args,**kwargs)
-
+         
          self.fields['first_name'].widget.attrs['placeholder']='Enter the First name'
          self.fields['last_name'].widget.attrs['placeholder']='Enter the last name'
          self.fields['email'].widget.attrs['placeholder']='Enter the Email'
@@ -35,3 +35,13 @@ class Userform(forms.ModelForm):
 
          for item in self.fields:
               self.fields[item].widget.attrs['class']='form-control'
+
+class UserprofileForm(forms.ModelForm):
+     profile_pic = forms.FileField(widget=forms.FileInput(attrs={'class':'btn-btn-info'}),validators=[validator_error])
+     cover_pic = forms.FileField(widget=forms.FileInput(attrs={'class':'btn-btn-info'}),validators=[validator_error])
+     address=forms.CharField(widget=forms.TextInput(attrs={
+          'placeholder':'Start typing ...','required':'required'
+     }), max_length=250, required=False)
+     class Meta:
+          model= Userprofile
+          fields=['profile_pic','cover_pic','address','country','state','pin_code','latitude','longitude']

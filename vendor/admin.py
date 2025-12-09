@@ -4,3 +4,4 @@ from . models import Vendor
 class VendorAdmin(admin.ModelAdmin):
     list_display=['user','vendor_name','is_active','created_at']
 admin.site.register(Vendor,VendorAdmin)
+

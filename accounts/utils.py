@@ -33,3 +33,24 @@ def send_verfication_email(request,user):
     mail.send()
 
 
+
+def reset_password_email(request,user):
+    current_url=get_current_site(request)
+    mail_subject="Resset the password "
+    messages=render_to_string('accounts/reset_password.html',{
+        'user': user,
+        'domain' : current_url,
+        'uid'   : urlsafe_base64_encode(force_bytes(user.pk)),
+        'token' : default_token_generator.make_token(user),
+
+    })
+    to_email=user.email
+    mail =EmailMessage(mail_subject,messages,to=[to_email])
+    mail.send()
+
+
+def send_verfication_mail(mail_subject,mail_templates,context):
+    messages=render_to_string(mail_templates,context)
+    to_email=context['user'].email
+    mail=EmailMessage(mail_subject,messages,to=[to_email])
+    mail.send()

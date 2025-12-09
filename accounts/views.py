@@ -3,12 +3,12 @@ from . forms import Userform
 from . models import User,Userprofile
 from django.contrib import messages,auth
 from vendor.forms import VendorForm
-from . utils import detectuser,send_verfication_email
+from . utils import detectuser,send_verfication_email,reset_password_email
 from django.contrib.auth.decorators import login_required , user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
-
+from vendor.models import Vendor
 
 def check_role_vendor(user):
       if user.role == 2:
@@ -140,7 +140,12 @@ def cusdashboard(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
 def vendordashboard(request):
-      return render(request,'accounts/vendordashboard.html')
+      vendor=Vendor.objects.get(user=request.user)
+      context={
+            'vendor':vendor
+      }
+
+      return render(request,'accounts/vendordashboard.html',context)
 
 @login_required(login_url='login')
 def Myaccounts(request):
@@ -169,3 +174,47 @@ def activate(request,uid64,token):
              messages.error(request,'Invalid details')
              return redirect('registerUser')
       
+
+def forgot(request):
+      if request.method == "POST":
+            email = request.POST.get('email')
+            if User.objects.filter(email=email).exists():
+                  user = User.objects.get(email__exact=email)
+
+                  reset_password_email(request,user)
+                  messages.success(request, 'Password reset link is sent to your Email!')
+      return render(request,'accounts/forgot.html')
+
+def reset(request):
+      return render(request,'accounts/forgot.html')
+
+
+def reset_password(request,uid64,token):
+      try:
+            uid=urlsafe_base64_decode(uid64).decode()
+            user= User._default_manager.get(pk=uid)
+      except(ValueError,TypeError,User.DoesNotExist):
+            user=None
+
+      if User is not None and default_token_generator.check_token(user,token):
+            request.session['uid'] = uid
+            messages.info(request,'Please reset the password!')
+            return redirect('reset')
+      return render(request,'accounts/forgot.html')
+
+def reset(request):
+      if request.method == "POST":
+            password = request.POST.get('password')
+            confirme_password=request.POST.get('confim_password')
+            if password == confirme_password:
+                  pk = request.session['uid']
+                  user= User.objects.get(pk=pk)
+                  user.set_password(password)
+                  user.save()
+                  messages.success(request,'Sucessfull update the password')
+                  return redirect('login')
+            else:
+               messages.error(request,'Password does not match !')
+               return redirect('reset')
+      return render(request ,'accounts/password_reset.html')
+
