@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+<!--Main Wrapper-->
+	<div class="wrapper">
+
+
+		
+		<!-- Main Section Start -->
+		<div class="main-section">
+			{% include "include/cover.html" %}
+			<div class="page-section account-header buyer-logged-in">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+							{% include "include/v_leftside.html" %}
+						</div>
+						<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+							<div class="user-dashboard loader-holder">
+								<div class="user-holder">
+									{% include "include/alert.html" %}
+									
+									<h2 class='text-centre'>Build your Menu</h2>
+                                    <hr>
+                                    <h6>Add Category</h6>
+                                    <form action="{% url 'edit_category' category.id %}" method='POST'>
+                                        {% csrf_token %}
+                                        <div class="control-form">
+                                            <label for="">Category</label>
+                                            {{form.category_name}}
+                                        </div>
+                                        <div class="control-form">
+                                            <label for="">Description</label>
+                                            {{form.description}}
+                                        </div>
+                                        {% for field in form %}
+                                            {% if fields.errors %}
+                                            {% for errors in fields %}
+                                            <li style='color:red'>{{errors}}</li>
+                                            {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        <input type="submit" value='Update Category' class='btn btn-success mt-4'>
+                                    
+
+                                    </form>
+
+									<!-- My Restaurants Form Start -->
+									
+
+									
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Main Section End -->
+
+
+{% endblock %}
